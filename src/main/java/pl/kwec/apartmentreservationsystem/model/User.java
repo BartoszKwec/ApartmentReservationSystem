@@ -1,30 +1,42 @@
 package pl.kwec.apartmentreservationsystem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Valid
 public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
+    @Column(nullable = false)
+    @NotEmpty(message = "The email cannot be empty")
+    @Email(message = "Email is invalid")
+    private String email;
+
+    @Column(nullable = false)
+    @NotEmpty(message = "The password cannot be empty")
+    private String password;
+
+    @Column(nullable = false)
+    @NotEmpty(message = "The name cannot be empty")
     private String name;
 
+    @Column(nullable = false)
+    @NotEmpty(message = "The surname cannot be empty")
     private String surname;
 
-    private String mail;
-
-    public User(){
-    }
-
-    public User(Long id, String name, String surname, String mail){
-        this.id=id;
-        this.mail=mail;
-        this.name=name;
-        this.surname=surname;
-    }
-//test branch
 }
