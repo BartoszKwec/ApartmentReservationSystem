@@ -9,7 +9,7 @@ import pl.kwec.apartmentreservationsystem.repository.UserRepo;
 public class UserService {
 
     private final UserRepo userRepo;
-    final String EMAIL_ALREADY_TAKEN = "This email is already used.";
+    private final String EMAIL_ALREADY_TAKEN = "User with %s is already used.";
 
     @Autowired
     public UserService(final UserRepo userRepo) {
@@ -17,10 +17,10 @@ public class UserService {
     }
 
     public void registerUser(final String email, final String password, final String name,
-                             final String surname) throws Exception {
+                             final String surname) {
 
         userRepo.findByEmail(email).ifPresent(user -> {
-            throw new RuntimeException(EMAIL_ALREADY_TAKEN);
+            throw new IllegalArgumentException(String.format(EMAIL_ALREADY_TAKEN, email));
         });
 
         final User user = User.builder()
