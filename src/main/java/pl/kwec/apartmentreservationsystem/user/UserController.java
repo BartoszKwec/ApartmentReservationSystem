@@ -1,5 +1,6 @@
-package pl.kwec.apartmentreservationsystem.controller;
+package pl.kwec.apartmentreservationsystem.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,10 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.kwec.apartmentreservationsystem.model.User;
-import pl.kwec.apartmentreservationsystem.service.UserService;
 
-import javax.validation.Valid;
 
 @Validated
 @RestController
@@ -26,10 +24,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody User user) {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody UserModel userModel) {
         try {
-            userService.registerUser(user.getEmail(), user.getPassword(),
-                    user.getName(), user.getSurname());
+            userService.registerUser(userModel.getEmail(), userModel.getPassword(),
+                    userModel.getName(), userModel.getSurname());
             return ResponseEntity.ok("Successful registration");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
