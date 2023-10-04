@@ -1,32 +1,51 @@
 package pl.kwec.apartmentreservationsystem.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.kwec.apartmentreservationsystem.authentication.registration.RegistrationRequest;
+import pl.kwec.apartmentreservationsystem.user.model.User;
+
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepo userRepo;
-    private final String EMAIL_ALREADY_TAKEN = "User with %s is already used.";
+    public static final String USER_NOT_FOUND_MESSAGE = "User not found";
 
-    @Autowired
-    public UserService(final UserRepo userRepo) {
-        this.userRepo = userRepo;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public User findByLogin(final String login) {
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_MESSAGE));
     }
 
-    public void registerUser(final String email, final String password, final String name,
-                             final String surname) {
+    public void save(final User user) {
+        userRepository.save(user);
+    }
 
-        userRepo.findByEmail(email).ifPresent(userModel -> {
-            throw new IllegalArgumentException(String.format(EMAIL_ALREADY_TAKEN, email));
-        });
+    public boolean existsByLogin(final String login) {
+        return userRepository.existsByLogin(login);
+    }
 
-        final UserModel userModel = UserModel.builder()
-                .name(name)
-                .email(email)
-                .surname(surname)
-                .password(password)
+    public User createUser(final RegistrationRequest request) {
+        final String encodePassword = passwordEncoder.encode(request.getPassword());
+
+        return User.builder()
+                .login(request.getLogin())
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .email(request.getEmail())
+                .password(encodePassword)
+                .role(request.getRole())
                 .build();
-        userRepo.save(userModel);
+    }
+
+    public ResponseEntity<?> findAllUsers() {
+        return ResponseEntity.of(Optional.of(userRepository.findAll()));
     }
 }

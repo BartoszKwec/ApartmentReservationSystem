@@ -1,4 +1,4 @@
-package pl.kwec.apartmentreservationsystem.registration;
+package pl.kwec.apartmentreservationsystem.authentication.login;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -6,15 +6,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.kwec.apartmentreservationsystem.authentication.login.model.LoginRequest;
 
 @RestController
-@RequestMapping("/api/v1/register")
 @RequiredArgsConstructor
-public class RegistrationController {
-    private final RegisterService service;
+@RequestMapping("/api/v1/login")
+public class LoginController {
+    private final LoginService loginService;
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody final RegisterRequest request) {
-        return service.register(request);
+    public ResponseEntity<?> login(@RequestBody final LoginRequest request) {
+        return loginService.login(request);
     }
 }
